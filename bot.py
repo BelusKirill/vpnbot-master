@@ -1,8 +1,10 @@
 import logging
 
 from aiogram.types import BotCommand
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 logger = logging.getLogger(__name__)
+scheduler = AsyncIOScheduler()
 
 
 def register_all_filters(dispatcher):
@@ -25,8 +27,15 @@ def register_all_handlers(dp):
     register_vpn_handlers(dp)
     register_error_handler(dp)
 
+def scheduler_jods():
+    from tgbot.handlers.schedul import check_subscriptions
+    
+    scheduler.add_job(check_subscriptions, "cron", hour=22, minute=27, args=(dp,))
+    #scheduler.add_job(check_subscriptions, "interval", seconds=10, args=(dp,)) #test
 
 async def on_startup(dispatcher):
+    scheduler_jods()
+
     logging.basicConfig(
         level=logging.DEBUG,
         format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s',
@@ -68,6 +77,7 @@ if __name__ == '__main__':
     from loader import dp  # , config
 
     # If you use polling
+    scheduler.start()
     executor.start_polling(dp, skip_updates=True,
                            on_startup=on_startup, on_shutdown=on_shutdown)
     # If you want to use webhooks.

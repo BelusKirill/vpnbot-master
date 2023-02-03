@@ -116,3 +116,7 @@ class Database:
     async def set_access(self, id_telegram, is_access):
         sql = f"UPDATE users SET access = {is_access}, date_access = '{datetime.now()}' WHERE id_telegram = '{id_telegram}'"
         return await self.execute(sql, execute=True)
+
+    async def get_access_for_check(self, date):
+        sql = f"SELECT * FROM users WHERE date_access <= '{date}'"
+        return await self.execute(sql, fetch=True)
