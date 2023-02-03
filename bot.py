@@ -7,6 +7,8 @@ logger = logging.getLogger(__name__)
 
 def register_all_filters(dispatcher):
     from tgbot.filters.admin import AdminFilter
+    from tgbot.filters.access import AccessFilter
+    dispatcher.filters_factory.bind(AccessFilter)
     dispatcher.filters_factory.bind(AdminFilter)
 
 

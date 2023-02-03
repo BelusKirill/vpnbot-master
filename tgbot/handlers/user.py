@@ -14,6 +14,11 @@ async def user_start(message: Message):
                          'После установки приложения, вернитесь в бота и нажмите кнопку «Подключиться». ',
                          reply_markup=keyboard_start(), disable_web_page_preview=True)
 
+async def user_start_subscriptions(message: Message):
+    await db.add_user(message.chat.id, message.from_user.full_name)
+
+    await message.answer('Не подписаны на каналы')
+
 async def download_handler(message: Message):
     await message.answer(f'Приложение доступно для всех устройств!\n\n'
                          f'Лимит трафика ограничен до 250 гигабайт в месяц.\n\n'
@@ -57,12 +62,13 @@ async def help_callback_handler(callback_query: CallbackQuery):
                            f'В месяц вы можете расходовать 250 гигабайт.\n\n'
                            f'4. Сколько устройств я могу подключить?\n'
                            f'Вы можете подключить неограниченное количество устройств с общим лимитом до 250 гигабайт в месяц.',
-                           reply_markup=keyboard_help(), disable_web_page_preview=True)
+                           reply_markup=None, disable_web_page_preview=True)
 
 
 def register_user(dp: Dispatcher):
-    dp.register_message_handler(user_start, commands=["start"], chat_type=ChatType.PRIVATE)
-    dp.register_message_handler(download_handler, commands=["download"], chat_type=ChatType.PRIVATE)
-    dp.register_callback_query_handler(download_callback_handler, lambda c: c.data == 'why', chat_type=ChatType.PRIVATE)
-    dp.register_message_handler(help_handler, commands=["help"], chat_type=ChatType.PRIVATE)
-    dp.register_callback_query_handler(help_callback_handler, lambda c: c.data == 'why', chat_type=ChatType.PRIVATE)
+    dp.register_message_handler(user_start, commands=["start"], chat_type=ChatType.PRIVATE, is_access=True)
+    dp.register_message_handler(user_start_subscriptions, commands=["start"], chat_type=ChatType.PRIVATE, is_access=False)
+    dp.register_message_handler(download_handler, commands=["download"], chat_type=ChatType.PRIVATE, is_access=True)
+    dp.register_callback_query_handler(download_callback_handler, lambda c: c.data == 'why', chat_type=ChatType.PRIVATE, is_access=True)
+    dp.register_message_handler(help_handler, commands=["help"], chat_type=ChatType.PRIVATE, is_access=True)
+    dp.register_callback_query_handler(help_callback_handler, lambda c: c.data == 'why', chat_type=ChatType.PRIVATE, is_access=True)

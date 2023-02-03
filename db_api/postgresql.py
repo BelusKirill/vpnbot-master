@@ -106,3 +106,7 @@ class Database:
             "ON CONFLICT (id_telegram) DO UPDATE SET " \
             f"name='{name}';"
         return await self.execute(sql, execute=True)
+
+    async def get_access(self, id_telegram):
+        sql = f"SELECT access FROM users WHERE id_telegram ='{id_telegram}'"
+        return await self.execute(sql, fetchval=True)
