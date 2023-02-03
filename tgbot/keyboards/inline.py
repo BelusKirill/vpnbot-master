@@ -2,7 +2,7 @@ import logging
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from loader import db
+from loader import db, config
 from .callback_data_factory import vpn_callback
 
 logger = logging.getLogger(__name__)
@@ -52,3 +52,13 @@ def keyboard_admin_action():
 
 def keyboard_cancel():
     return InlineKeyboardMarkup().add(InlineKeyboardButton(f'❌Выйти из меню', callback_data=f"cancel"))
+
+
+def keyboard_channels():
+    keyboard = InlineKeyboardMarkup(row_width=2)
+    channel1 = InlineKeyboardButton(f'Канал 1', url=f'https://t.me/{config.tg_bot.chanel_1}')
+    channel2 = InlineKeyboardButton(f'Канал 2', url=f'https://t.me/{config.tg_bot.chanel_2}')
+    check = InlineKeyboardButton(f'Проверить подписку', callback_data='check_channels')
+    keyboard.row(channel1, channel2)
+    keyboard.add(check)
+    return keyboard

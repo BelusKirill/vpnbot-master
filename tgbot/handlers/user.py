@@ -1,8 +1,8 @@
 from aiogram import Dispatcher
 from aiogram.types import Message, CallbackQuery, ChatType
 
-from loader import bot, db
-from tgbot.keyboards.inline import keyboard_start, keyboard_download
+from loader import bot, db, config
+from tgbot.keyboards.inline import keyboard_start, keyboard_download, keyboard_channels
 
 
 async def user_start(message: Message):
@@ -17,7 +17,15 @@ async def user_start(message: Message):
 async def user_start_subscriptions(message: Message):
     await db.add_user(message.chat.id, message.from_user.full_name)
 
-    await message.answer('Не подписаны на каналы')
+    await message.answer('Для пользования функционалом бота, необходимо подписаться на каналы', reply_markup=keyboard_channels(), disable_web_page_preview=True)
+
+async def check_subscriptions(callback_query: CallbackQuery):
+    try:
+        if await check_subscriptions_shannel(callback_query.message, config.tg_bot.chanel_1, config.tg_bot.id_chanel_1):
+            if await check_subscriptions_shannel(callback_query.message, config.tg_bot.chanel_2, config.tg_bot.id_chanel_2):
+                await callback_query.message.answer('OK')
+    except Exception as ex:
+        print('Ошибка', ex)
 
 async def download_handler(message: Message):
     await message.answer(f'Приложение доступно для всех устройств!\n\n'
@@ -64,11 +72,22 @@ async def help_callback_handler(callback_query: CallbackQuery):
                            f'Вы можете подключить неограниченное количество устройств с общим лимитом до 250 гигабайт в месяц.',
                            reply_markup=None, disable_web_page_preview=True)
 
+async def check_subscriptions_shannel(message: Message, chanel, id_chanel):
+    cannal = f'@{chanel}' if id_chanel == '' else id_chanel
+    user_channel_status = await bot.get_chat_member(chat_id=cannal, user_id=message.chat.id)
+    if user_channel_status["status"] != 'left':
+        return True
+    else:
+        await message.answer(f'Не подписанны на каналы')
+        return False
+
 
 def register_user(dp: Dispatcher):
     dp.register_message_handler(user_start, commands=["start"], chat_type=ChatType.PRIVATE, is_access=True)
-    dp.register_message_handler(user_start_subscriptions, commands=["start"], chat_type=ChatType.PRIVATE, is_access=False)
     dp.register_message_handler(download_handler, commands=["download"], chat_type=ChatType.PRIVATE, is_access=True)
     dp.register_callback_query_handler(download_callback_handler, lambda c: c.data == 'why', chat_type=ChatType.PRIVATE, is_access=True)
     dp.register_message_handler(help_handler, commands=["help"], chat_type=ChatType.PRIVATE, is_access=True)
     dp.register_callback_query_handler(help_callback_handler, lambda c: c.data == 'why', chat_type=ChatType.PRIVATE, is_access=True)
+
+    dp.register_message_handler(user_start_subscriptions, chat_type=ChatType.PRIVATE, is_access=False)
+    dp.register_callback_query_handler(check_subscriptions, lambda c: c.data == 'check_channels', chat_type=ChatType.PRIVATE, is_access=False)
