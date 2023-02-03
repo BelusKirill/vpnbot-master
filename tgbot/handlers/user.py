@@ -23,7 +23,9 @@ async def check_subscriptions(callback_query: CallbackQuery):
     try:
         if await check_subscriptions_shannel(callback_query.message, config.tg_bot.chanel_1, config.tg_bot.id_chanel_1):
             if await check_subscriptions_shannel(callback_query.message, config.tg_bot.chanel_2, config.tg_bot.id_chanel_2):
-                await callback_query.message.answer('OK')
+                await callback_query.message.delete()
+                await db.set_access(callback_query.from_user.id, True)
+                await user_start(callback_query.message)
     except Exception as ex:
         print('Ошибка', ex)
 

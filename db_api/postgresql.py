@@ -6,6 +6,8 @@ import asyncpg
 from asyncpg import Connection
 from asyncpg.pool import Pool
 
+from datetime import datetime
+
 
 logger = logging.getLogger(__name__)
 
@@ -110,3 +112,7 @@ class Database:
     async def get_access(self, id_telegram):
         sql = f"SELECT access FROM users WHERE id_telegram ='{id_telegram}'"
         return await self.execute(sql, fetchval=True)
+
+    async def set_access(self, id_telegram, is_access):
+        sql = f"UPDATE users SET access = {is_access}, date_access = '{datetime.now()}' WHERE id_telegram = '{id_telegram}'"
+        return await self.execute(sql, execute=True)
