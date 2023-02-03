@@ -89,3 +89,20 @@ class Database:
     async def delete_server(self, server_id):
         sql = "DELETE FROM vpn_servers WHERE id=$1"
         return await self.execute(sql, server_id, execute=True)
+
+    async def create_users_table(self):
+        sql = "CREATE TABLE IF NOT EXISTS users ( " \
+	        "id bigserial PRIMARY KEY, " \
+	        "id_telegram varchar(255) NOT NULL UNIQUE," \
+	        "name varchar(255), " \
+	        "access bool, " \
+	        "id_server int4 NULL, " \
+	        "date_access date)"
+        return await self.execute(sql, execute=True)
+
+    async def add_user(self, id_telegram, name):
+        sql = "INSERT INTO users (id_telegram, name) " \
+            f"VALUES ({id_telegram}, '{name}') " \
+            "ON CONFLICT (id_telegram) DO UPDATE SET " \
+            f"name='{name}';"
+        return await self.execute(sql, execute=True)

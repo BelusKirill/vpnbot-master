@@ -33,6 +33,7 @@ async def on_startup(dispatcher):
     from loader import db
     if await db.create_pool():
         await db.create_servers_table()
+        await db.create_users_table()
         register_all_filters(dispatcher)
         register_all_handlers(dispatcher)
         # If you use polling

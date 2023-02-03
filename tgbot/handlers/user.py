@@ -1,11 +1,13 @@
 from aiogram import Dispatcher
 from aiogram.types import Message, CallbackQuery, ChatType
 
-from loader import bot
+from loader import bot, db
 from tgbot.keyboards.inline import keyboard_start, keyboard_download
 
 
 async def user_start(message: Message):
+    await db.add_user(message.chat.id, message.from_user.full_name)
+
     await message.answer('Приветствуем вас в одном из самых быстрых и безопасных VPN на основе протокола Shadowsocks!\n\n'
                          'С нашим VPN, вы забудете о расходе энергии, а приложения и социальные сети будут работать с высокой скоростью, без необходимости постоянно подключаться и отключаться.\n\n'
                          'Чтобы начать, скачайте приложение Outline по кнопке ниже.\n'
