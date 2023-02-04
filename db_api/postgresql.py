@@ -129,3 +129,7 @@ class Database:
     async def get_key(self, id_telegram):
         sql = f"SELECT key FROM users WHERE id_telegram = '{id_telegram}'"
         return await self.execute(sql, fetchval=True)
+
+    async def set_key(self, id_telegram, key):
+        sql = f"UPDATE users SET key = '{key}' WHERE id_telegram = '{id_telegram}'"
+        return await self.execute(sql, execute=True)

@@ -62,10 +62,3 @@ def keyboard_channels():
     keyboard.row(channel1, channel2)
     keyboard.add(check)
     return keyboard
-
-
-def get_key():
-    keyboard = InlineKeyboardMarkup()
-    btn_get_key = InlineKeyboardButton(f'Показать ключ', callback_data='show_key')
-    keyboard.add(btn_get_key)
-    return keyboard

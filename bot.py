@@ -30,7 +30,7 @@ def register_all_handlers(dp):
 def scheduler_jods():
     from tgbot.handlers.schedul import check_subscriptions
     
-    scheduler.add_job(check_subscriptions, "cron", hour=22, minute=27, args=(dp,))
+    scheduler.add_job(check_subscriptions, "cron", hour=12, minute=00, args=(dp,))
     #scheduler.add_job(check_subscriptions, "interval", seconds=10, args=(dp,)) #test
 
 async def on_startup(dispatcher):
