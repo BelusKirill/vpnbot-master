@@ -66,7 +66,10 @@ async def make_request(session, url, method, post: bool = False, **kwargs):
                     body = response.text
                 return check_result(method, response.content_type, response.status, body)
     except aiohttp.ClientError as e:
+        print(e)
         raise NetworkError(f"aiohttp client throws an error: {e.__class__.__name__}: {e}")
+    except aiohttp.client_exceptions as e:
+        print(e)
 
 
 class Methods:

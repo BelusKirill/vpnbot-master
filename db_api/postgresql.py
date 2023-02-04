@@ -98,7 +98,7 @@ class Database:
 	        "id_telegram varchar(255) NOT NULL UNIQUE," \
 	        "name varchar(255), " \
 	        "access bool, " \
-	        "id_server int4 NULL, " \
+	        "key varchar(255) NULL, " \
 	        "date_access date)"
         return await self.execute(sql, execute=True)
 
@@ -120,3 +120,12 @@ class Database:
     async def get_access_for_check(self, date):
         sql = f"SELECT * FROM users WHERE date_access <= '{date}'"
         return await self.execute(sql, fetch=True)
+
+    async def check_key(self, id_telegram):
+        sql = "SELECT CASE WHEN key IS NULL THEN 1 ELSE 0 END AS key " \
+            f"FROM users WHERE id_telegram = '{id_telegram}';"
+        return await self.execute(sql, fetchval=True)
+
+    async def get_key(self, id_telegram):
+        sql = f"SELECT key FROM users WHERE id_telegram = '{id_telegram}'"
+        return await self.execute(sql, fetchval=True)

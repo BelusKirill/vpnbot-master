@@ -74,7 +74,7 @@ async def on_shutdown(dispatcher):
 
 if __name__ == '__main__':
     from aiogram.utils import executor
-    from loader import dp  # , config
+    from loader import dp #, config
 
     # If you use polling
     scheduler.start()
