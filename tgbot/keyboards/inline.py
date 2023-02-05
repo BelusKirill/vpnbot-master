@@ -56,9 +56,8 @@ def keyboard_cancel():
 
 def keyboard_channels():
     keyboard = InlineKeyboardMarkup(row_width=2)
-    channel1 = InlineKeyboardButton(f'Канал 1', url=f'https://t.me/{config.tg_bot.chanel_1}')
-    channel2 = InlineKeyboardButton(f'Канал 2', url=f'https://t.me/{config.tg_bot.chanel_2}')
+    for i, channel in enumerate(config.tg_bot.channels):
+        keyboard.add(InlineKeyboardButton(f'Канал {i+1}', url=f'https://t.me/{channel}'))
     check = InlineKeyboardButton(f'Проверить подписку', callback_data='check_channels')
-    keyboard.row(channel1, channel2)
     keyboard.add(check)
     return keyboard

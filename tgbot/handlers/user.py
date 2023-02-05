@@ -6,7 +6,7 @@ from tgbot.keyboards.inline import keyboard_start, keyboard_download, keyboard_c
 
 
 async def user_start(message: Message):
-    await db.add_user(message.chat.id, message.from_user.full_name)
+    await db.add_user(message.chat.id, message.chat.full_name)
 
     await message.answer('Приветствуем вас в одном из самых быстрых и безопасных VPN на основе протокола Shadowsocks!\n\n'
                          'С нашим VPN, вы забудете о расходе энергии, а приложения и социальные сети будут работать с высокой скоростью, без необходимости постоянно подключаться и отключаться.\n\n'
@@ -15,17 +15,19 @@ async def user_start(message: Message):
                          reply_markup=keyboard_start(), disable_web_page_preview=True)
 
 async def user_start_subscriptions(message: Message):
-    await db.add_user(message.chat.id, message.from_user.full_name)
+    await db.add_user(message.chat.id, message.chat.full_name)
 
     await message.answer('Для пользования функционалом бота, необходимо подписаться на каналы', reply_markup=keyboard_channels(), disable_web_page_preview=True)
 
 async def check_subscriptions(callback_query: CallbackQuery):
     try:
-        if await check_subscriptions_shannel(callback_query.message, config.tg_bot.chanel_1, config.tg_bot.id_chanel_1):
-            if await check_subscriptions_shannel(callback_query.message, config.tg_bot.chanel_2, config.tg_bot.id_chanel_2):
-                await callback_query.message.delete()
-                await db.set_access(callback_query.from_user.id, True)
-                await user_start(callback_query.message)
+        for i, channel in enumerate(config.tg_bot.channels):
+            if await check_subscriptions_shannel(callback_query.message, callback_query.from_user.id, channel, config.tg_bot.id_channels[i]) == False:
+                return
+
+        await callback_query.message.delete()
+        await db.set_access(callback_query.from_user.id, True)
+        await user_start(callback_query.message)
     except Exception as ex:
         print('Ошибка', ex)
 
@@ -74,13 +76,13 @@ async def help_callback_handler(callback_query: CallbackQuery):
                            f'Вы можете подключить неограниченное количество устройств с общим лимитом до 250 гигабайт в месяц.',
                            reply_markup=None, disable_web_page_preview=True)
 
-async def check_subscriptions_shannel(message: Message, chanel, id_chanel):
-    cannal = f'@{chanel}' if id_chanel == '' else id_chanel
-    user_channel_status = await bot.get_chat_member(chat_id=cannal, user_id=message.chat.id)
+async def check_subscriptions_shannel(message: Message, id_user, chanel, id_chanel):
+    cannal = f'@{chanel}' if id_chanel == 0 else id_chanel
+    user_channel_status = await bot.get_chat_member(chat_id=cannal, user_id=id_user)
     if user_channel_status["status"] != 'left':
         return True
     else:
-        await message.answer(f'Не подписанны на каналы')
+        await message.answer(f'Вы не подписанны на канал')
         return False
 
 

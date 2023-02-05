@@ -17,10 +17,8 @@ class TgBot:
     admin_ids: List[int]
     ip: str
     port: int
-    chanel_1: str
-    chanel_2: str
-    id_chanel_1: int
-    id_chanel_2: int
+    channels: str
+    id_channels: int
 
 @dataclass
 class Webhook:
@@ -42,10 +40,8 @@ def load_config():
             token=environ.get("BOT_TOKEN"),
             admin_ids=list(map(int, environ.get("ADMIN").split(","))),
             ip=environ.get('BOT_IP'), port=int(environ.get("BOT_PORT")),
-            chanel_1 = environ.get("CHANNEL_1"),
-            chanel_2 = environ.get("CHANNEL_2"),
-            id_chanel_1 = environ.get("ID_CHANNEL_1"),
-            id_chanel_2 = environ.get("ID_CHANNEL_2")
+            channels = list(map(str, environ.get("CHANNELS").split(","))),
+            id_channels = list(map(int, environ.get("ID_CHANNELS").split(","))),
         ),
         db=DbConfig(
             host=environ.get('DB_HOST'),

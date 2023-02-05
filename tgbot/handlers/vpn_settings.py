@@ -27,13 +27,14 @@ async def get_new_key(callback_query: CallbackQuery, callback_data: Dict[str, st
             data = await outline.create_key(await db.get_server_key(int(callback_data['server'])))
             await db.set_key(callback_query.from_user.id, data["accessUrl"])
             await bot.send_message(callback_query.from_user.id,
-                                'Вставьте вашу ссылку доступа в приложение Outline:\n '\
+                                'Вставьте вашу ссылку доступа в приложение Outline:')
+            await bot.send_message(callback_query.from_user.id,
                                 f'`{data["accessUrl"]}`', parse_mode=types.ParseMode.MARKDOWN)
             await callback_query.answer()
         else:
             key = await db.get_key(callback_query.from_user.id)            
-            await bot.send_message(callback_query.from_user.id, 'Ключ уже сгенерирован\n ' \
-                                                                f'`{key}`', parse_mode=types.ParseMode.MARKDOWN)
+            await bot.send_message(callback_query.from_user.id, 'Вставьте вашу ссылку доступа в приложение Outline:')
+            await bot.send_message(callback_query.from_user.id, f'`{key}`', parse_mode=types.ParseMode.MARKDOWN)                                                
     except ClientConnectorError:
         await bot.send_message(callback_query.from_user.id,
                                f'Не удалось связаться с сервером для получения ключа, попробуйте через какое-то время')
