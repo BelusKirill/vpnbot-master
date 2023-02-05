@@ -12,8 +12,10 @@ def keyboard_start():
     keyboard = InlineKeyboardMarkup()
     inline_btn_1 = InlineKeyboardButton(f'1. Скачать приложение', url=f'https://dl.provpnbot.com/6gaa4')
     inline_btn_2 = InlineKeyboardButton(f'2. Подключиться', callback_data=vpn_callback.new(action_type='vpn_settings', server='no'))
+    inline_btn_3 = InlineKeyboardButton(f'3. Открыть приложение', url=f'https://Google.com')
     keyboard.row(inline_btn_1)
     keyboard.row(inline_btn_2)
+    keyboard.row(inline_btn_3)
     return keyboard
 
 def keyboard_download():
